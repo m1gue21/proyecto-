@@ -1,11 +1,11 @@
 extends KinematicBody2D
 
 #constantes
-const ACCELERATION = 500
-const MAX_SPEED = 80
-const FRICTION = 500
-const ROLL_SPEED = 120
-##que es esto?
+export var ACCELERATION = 500
+export var MAX_SPEED = 80
+export var FRICTION = 500
+export var ROLL_SPEED = 120
+##que es esto?-> lista accseso rapido
 enum {
 	MOVE,
 	ROLL,
@@ -18,9 +18,11 @@ var roll_vector = Vector2.LEFT
 onready var animationPlayer = $AnimationPlayer # se esta llamando un nodo de la escena
 onready var animationTree = $AnimationTree
 onready var animationState = animationTree.get("parameters/playback")
+onready var swordHitbox = $HitboxPivot/SwordHitbox
 
 func _ready():
 	animationTree.active = true #hace q el animation tree funcione al empezar el juego y no antes 
+	swordHitbox.knockback_vector = roll_vector
 	
 
 func _physics_process(delta):
@@ -44,6 +46,7 @@ func move_state(delta): #para mover a el jugador y animar sus movimientos
 	
 	if input_vector != Vector2.ZERO:#aca se trabajan las animaciones
 		roll_vector = input_vector
+		swordHitbox.knockback_vector = input_vector
 		animationTree.set("parameters/Idle/blend_position", input_vector)#para que la animacion empiece con quieto
 		animationTree.set("parameters/Run/blend_position", input_vector)##para que al moverse la animacion corra
 		animationTree.set("parameters/Attack/blend_position", input_vector) ## direccion de la animacion de atacar
